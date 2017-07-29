@@ -1,0 +1,13 @@
+[package]
+name = "ggez-specs"
+version = "0.1.0"
+authors = ["Stefan Seemayer <stefan@seemayer.de>"]
+
+[dependencies]
+specs = "0.9"
+specs-derive = "0.1"
+nalgebra = "0.11"
+
+[dependencies.ggez]
+version = "0.3"
+features = ["cargo-resource-root"]
