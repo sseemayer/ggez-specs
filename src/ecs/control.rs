@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use ggez::event::Keycode;
 
-use specs::{System, HashMapStorage, Fetch, ReadStorage, WriteStorage};
+use specs::{System, HashMapStorage, Fetch, ReadStorage, WriteStorage, World, DispatcherBuilder};
 
 use ecs::movement::{Velocity};
 
@@ -49,4 +49,11 @@ impl<'a> System<'a> for Control {
             vel.0[1] = yvel;
         }
     }
+}
+
+pub fn init_world<'a, 'b>(world: &mut World, dispatcher_builder: DispatcherBuilder<'a, 'b>) -> DispatcherBuilder<'a, 'b> {
+    world.register::<Controllable>();
+    world.add_resource(Keyboard::new());
+
+    dispatcher_builder.add(Control, "Control", &[])
 }

@@ -1,7 +1,7 @@
 extern crate nalgebra as na;
 extern crate specs;
 
-use specs::{System, VecStorage, Fetch, ReadStorage, WriteStorage};
+use specs::{System, VecStorage, Fetch, ReadStorage, WriteStorage, World, DispatcherBuilder};
 use ecs::DeltaTime;
 
 #[derive(Component, Debug)]
@@ -56,4 +56,15 @@ impl<'a> System<'a> for Rotate {
             rot.0 += amo.0 * delta;
         }
     }
+}
+
+pub fn init_world<'a, 'b>(world: &mut World, dispatcher_builder: DispatcherBuilder<'a, 'b>) -> DispatcherBuilder<'a, 'b> {
+    world.register::<Position>();
+    world.register::<Velocity>();
+    world.register::<Rotation>();
+    world.register::<AngularMomentum>();
+
+    dispatcher_builder
+        .add(Move, "Move", &[])
+        .add(Rotate, "Rotate", &[])
 }

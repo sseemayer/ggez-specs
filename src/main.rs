@@ -27,15 +27,15 @@ impl<'a, 'b> MainState<'a, 'b> {
     fn new(ctx: &mut Context) -> GameResult<MainState<'a, 'b>> {
 
         let mut world = specs::World::new();
-        world.register::<ecs::movement::Position>();
-        world.register::<ecs::movement::Velocity>();
-        world.register::<ecs::movement::Rotation>();
-        world.register::<ecs::movement::AngularMomentum>();
-        world.register::<ecs::control::Controllable>();
-        world.register::<ecs::graphics::Sprite>();
+        let mut dispatcher_builder = DispatcherBuilder::new();
 
-        world.add_resource(ecs::DeltaTime(0.05));
-        world.add_resource(ecs::control::Keyboard::new());
+        dispatcher_builder = ecs::init_world(&mut world, dispatcher_builder);
+        dispatcher_builder = ecs::control::init_world(&mut world, dispatcher_builder);
+        dispatcher_builder = ecs::graphics::init_world(&mut world, dispatcher_builder);
+        dispatcher_builder = ecs::movement::init_world(&mut world, dispatcher_builder);
+
+
+        let dispatcher = dispatcher_builder.build();
 
         world.create_entity()
             .with(ecs::movement::Position(na::Vector2::new(320.0, 240.0)))
@@ -46,11 +46,6 @@ impl<'a, 'b> MainState<'a, 'b> {
             .with(ecs::graphics::Sprite(graphics::Image::new(ctx, "/duck_target_brown.png")?))
             .build();
 
-        let dispatcher = DispatcherBuilder::new()
-            .add(ecs::control::Control, "Control", &[])
-            .add(ecs::movement::Move, "Move", &[])
-            .add(ecs::movement::Rotate, "Rotate", &[])
-            .build();
 
         Ok(MainState {
             world: world,
